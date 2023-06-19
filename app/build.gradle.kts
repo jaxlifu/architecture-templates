@@ -46,7 +46,11 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
         // 设置编译出来的apk的名称
-        setProperty("archivesBaseName", "${rootProject.name}-$versionName")
+        val date = SimpleDateFormat("yyyyMMddHHmmss").format(Date())
+        setProperty(
+            "archivesBaseName",
+            "${rootProject.name}-$versionName-${date}"
+        )
     }
 
     // 从 local.properties 文件中获取签名信息
