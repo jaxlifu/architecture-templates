@@ -66,10 +66,10 @@ find . -name "*.bak" -type f -delete
 echo "Renaming files to $DATAMODEL"
 find ./ -name "*MyModel*.kt" | sed "p;s/MyModel/${DATAMODEL^}/" | tr '\n' '\0' | xargs -0 -n 2 mv
 # module names
-if [[ -n $(find ./ -name "*-mymodel") ]]
+if [[ -n $(find ./ -name "*mymodel") ]]
 then
   echo "Renaming modules to $DATAMODEL"
-  find ./ -name "*-mymodel" -type d  | sed "p;s/mymodel/${DATAMODEL,,}/" |  tr '\n' '\0' | xargs -0 -n 2 mv
+  find ./ -maxdepth 2 -name "*mymodel" -type d  | sed "p;s/mymodel/${DATAMODEL,,}/" |  tr '\n' '\0' | xargs -0 -n 2 mv
 fi
 # directories
 echo "Renaming directories to $DATAMODEL"
