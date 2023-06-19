@@ -1,3 +1,7 @@
+@file:Suppress("UnstableApiUsage")
+
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 /*
  * Copyright (C) 2022 The Android Open Source Project
  *
@@ -13,7 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     alias(libs.plugins.android.application)
@@ -32,7 +35,7 @@ android {
         minSdk = 21
         targetSdk = 33
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.0.1"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -42,12 +45,36 @@ android {
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
+        // 设置编译出来的apk的名称
+        setProperty("archivesBaseName", "${rootProject.name}-$versionName")
+    }
+
+    // 从 local.properties 文件中获取签名信息
+    val properties = gradleLocalProperties(rootDir)
+    val signingFilePath = properties.getProperty("storeFile", "")
+    signingConfigs {
+        if (signingFilePath.isNotBlank()) {
+            create("release") {
+                storeFile = file(signingFilePath)
+                storePassword = properties.getProperty("storePassword")
+                keyAlias = properties.getProperty("keyAlias")
+                keyPassword = properties.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+            signingConfig = if (signingFilePath.isNotBlank()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 
@@ -59,7 +86,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
     buildFeatures {
         compose = true
         aidl = false
@@ -72,7 +98,7 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
