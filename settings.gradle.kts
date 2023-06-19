@@ -28,12 +28,12 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Multimodule template"
+rootProject.name = "MyApplication"
 
 include(":app")
-include(":core-data")
-include(":core-database")
-include(":core-testing")
-include(":core-ui")
-include(":feature-mymodel")
+include(":core:data")
+include(":core:database")
+include(":core:testing")
+include(":core:ui")
+include(":feature:mymodel")
 include(":test-app")

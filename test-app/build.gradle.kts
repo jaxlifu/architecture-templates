@@ -52,9 +52,9 @@ android {
 
 dependencies {
     implementation(project(":app"))
-    implementation(project(":core-data"))
-    implementation(project(":core-testing"))
-    implementation(project(":feature-mymodel"))
+    implementation(project(":core:data"))
+    implementation(project(":core:testing"))
+    implementation(project(":feature:mymodel"))
 
     // Testing
     implementation(libs.androidx.test.core)
